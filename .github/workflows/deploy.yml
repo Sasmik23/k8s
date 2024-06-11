@@ -39,7 +39,16 @@ jobs:
 
     - name: Configure kubectl
       run: |
+        mkdir -p $HOME/.kube
         echo "${{ secrets.KUBE_CONFIG_DATA }}" | base64 --decode > $HOME/.kube/config
+        kubectl config use-context iam-root-account@my-cluster.us-west-2.eksctl.io
+      env:
+        KUBECONFIG: $HOME/.kube/config
+
+    - name: Verify kubectl configuration
+      run: |
+        kubectl config view
+        kubectl get nodes
       env:
         KUBECONFIG: $HOME/.kube/config
 
