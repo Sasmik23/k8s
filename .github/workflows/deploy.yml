@@ -1,7 +1,6 @@
 name: Build & Deploy
 
 on:
-
   push:
     branches: [ "main" ]
     # Publish server tags as releases.
@@ -12,9 +11,6 @@ on:
 env:
   # Use docker.io for Docker Hub if empty
   REGISTRY: ghcr.io
-  # github.repository as <account>/<repo>
-  IMAGE_NAME: ${{ github.repository }}
-
 
 jobs:
   build:
@@ -30,6 +26,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+
+      # Set the IMAGE_NAME environment variable in lowercase
+      - name: Set IMAGE_NAME
+        run: echo "IMAGE_NAME=$(echo ${GITHUB_REPOSITORY,,})" >> $GITHUB_ENV
 
       # Install the cosign tool except on PR
       # https://github.com/sigstore/cosign-installer
@@ -71,13 +71,13 @@ jobs:
         with:
           context: .
           push: ${{ github.event_name != 'pull_request' }}
-          #tags: ${{ steps.meta.outputs.tags }}
           tags: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
   deploy:
     name: Deploy
     needs: [ build ]
@@ -87,7 +87,7 @@ jobs:
         uses: azure/k8s-set-context@v3
         with:
           method: kubeconfig
-          kubeconfig: ${{secrets.KUBECONFIG}}
+          kubeconfig: ${{ secrets.KUBECONFIG }}
 
       - name: Checkout source code
         uses: actions/checkout@v3
