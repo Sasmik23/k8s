@@ -33,8 +33,11 @@ jobs:
 
     - name: Configure kubeconfig
       run: |
-        echo "${{ secrets.KUBE_CONFIG_DATA }}" | base64 --decode > ${HOME}/.kube/config
+        mkdir -p $HOME/.kube
+        echo "${{ secrets.KUBE_CONFIG_DATA }}" | base64 --decode > $HOME/.kube/config
 
     - name: Update Kubernetes deployment
+      env:
+        KUBECONFIG: $HOME/.kube/config
       run: |
         kubectl set image deployment/flask-app flask-app=sasmik23/flask-app:latest
