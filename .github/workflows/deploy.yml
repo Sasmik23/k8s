@@ -37,8 +37,14 @@ jobs:
       with:
         version: v1.21.0
 
-    - name: Deploy to Kubernetes
+    - name: Configure kubectl
+      run: |
+        echo "${{ secrets.KUBE_CONFIG_DATA }}" | base64 --decode > $HOME/.kube/config
       env:
-        KUBECONFIG: ${{ secrets.KUBECONFIG }}
-      run: kubectl apply -f deployment.yaml
-           kubectl apply -f service.yaml
+        KUBECONFIG: $HOME/.kube/config
+
+    - name: Deploy to Kubernetes
+      run: |
+        kubectl set image deployment/flask-app flask-app=sasmik23/flask-app:latest
+      env:
+        KUBECONFIG: $HOME/.kube/config
