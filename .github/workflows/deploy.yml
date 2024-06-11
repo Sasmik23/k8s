@@ -56,7 +56,7 @@ jobs:
 
     - name: Set kubectl context
       run: |
-        kubectl config use-context arn:aws:eks:us-west-2:767397843382:cluster/my-cluster
+        kubectl config use-context iam-root-account@my-cluster.us-west-2.eksctl.io
       env:
         KUBECONFIG: $HOME/.kube/config
 
@@ -72,3 +72,4 @@ jobs:
         kubectl set image deployment/flask-app flask-app=sasmik23/flask-app:latest
       env:
         KUBECONFIG: $HOME/.kube/config
+        
