@@ -89,10 +89,12 @@ jobs:
           unzip awscliv2.zip
           sudo ./aws/install --update
 
-      - name: Install aws-iam-authenticator using apt-get
+      - name: Install aws-iam-authenticator
         run: |
-          sudo apt-get update
-          sudo apt-get install -y awscli
+          curl -sL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh | bash
+          echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> /home/runner/.profile
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+          brew install aws-iam-authenticator
 
       - name: Configure AWS credentials
         env:
