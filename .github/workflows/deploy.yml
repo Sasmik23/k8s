@@ -32,44 +32,12 @@ jobs:
     - name: Push Docker image
       run: docker push sasmik23/flask-app:latest
 
-    - name: Set up kubectl
-      uses: azure/setup-kubectl@v1
+    - name: Set up Kubectl
+      uses: azure/k8s-set-context@v1
       with:
-        version: v1.21.0
-
-    - name: Configure kubectl
+        kubeconfig: ${{ secrets.KUBECONFIG }}
+    
+    - name: Deploy
       run: |
-        mkdir -p $HOME/.kube
-        echo "${{ secrets.KUBE_CONFIG_DATA }}" | base64 --decode > $HOME/.kube/config
-      env:
-        KUBECONFIG: $HOME/.kube/config
-
-    - name: Verify kubeconfig content
-      run: cat $HOME/.kube/config
-      env:
-        KUBECONFIG: $HOME/.kube/config
-
-    - name: List all contexts
-      run: kubectl config get-contexts
-      env:
-        KUBECONFIG: $HOME/.kube/config
-
-    - name: Set kubectl context
-      run: |
-        kubectl config use-context iam-root-account@my-cluster.us-west-2.eksctl.io
-      env:
-        KUBECONFIG: $HOME/.kube/config
-
-    - name: Verify kubectl configuration
-      run: |
-        kubectl config view
-        kubectl get nodes
-      env:
-        KUBECONFIG: $HOME/.kube/config
-
-    - name: Deploy to Kubernetes
-      run: |
-        kubectl set image deployment/flask-app flask-app=sasmik23/flask-app:latest
-      env:
-        KUBECONFIG: $HOME/.kube/config
-        
+        kubectl apply -f deployment.yaml
+        kubectl apply -f service.yaml
