@@ -16,6 +16,7 @@ spec:
     spec:
       containers:
       - name: flask-app
-        image: sasmik23/flask-app:latest
+        #image: sasmik23/flask-app:latest
+        image: 767397843382.dkr.ecr.us-west-2.amazonaws.com/cdk-hnb659fds-container-assets-767397843382-us-west-2:<IMAGE_TAG>
         ports:
         - containerPort: 8080
