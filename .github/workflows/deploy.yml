@@ -6,7 +6,7 @@ on:
     branches: [ main ]
 
 env:
-  ECR_REPOSITORY: flask-app
+  ECR_REPOSITORY: cdk-hnb659fds-container-assets-767397843382-us-west-2
   EKS_CLUSTER_NAME: my-cluster
   AWS_REGION: us-west-2
 
@@ -55,4 +55,4 @@ jobs:
       run: |
         sed -i.bak "s|DOCKER_IMAGE|$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG|g" deployment.yaml && \
         kubectl apply -f deployment.yaml
-        kubectl apply -f ervice.yaml
+        kubectl apply -f service.yaml
